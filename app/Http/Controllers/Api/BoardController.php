@@ -79,4 +79,33 @@ class BoardController extends Controller
         return response()->json($board->load('columns'), 201);
     }
 
+    public function update(Request $request, Board $board)
+    {
+        // A autorização já foi feita pelo middleware 'owner'
+        $validator = Validator::make($request->all(), [
+            'title' => 'sometimes|required|string|max:80',
+            'description' => 'nullable|string|max:255',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json(['errors' => $validator->errors()], 422);
+        }
+
+        $board->update($request->only('title', 'description'));
+
+        return response()->json($board);
+    }
+
+    /**
+     * Exclui um quadro e todos os seus conteúdos.
+     * Requer que o usuário seja o dono do quadro.
+     */
+    public function destroy(Board $board)
+    {
+        // A autorização já foi feita pelo middleware 'owner'
+        $board->delete();
+
+        return response()->json(null, 204); // 204 No Content
+    }
+
 }
