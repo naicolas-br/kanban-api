@@ -53,5 +53,30 @@ class BoardController extends Controller
         ]);
     }
     
-    // Deixe os outros métodos (store, update, destroy) para a próxima etapa.
+    public function store(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'title' => 'required|string|max:80',
+            'description' => 'nullable|string|max:255',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json(['errors' => $validator->errors()], 422);
+        }
+
+        $user = $request->user(); // O middleware 'auth.token' nos dá o usuário
+
+        $board = $user->boards()->create([
+            'title' => $request->title,
+            'description' => $request->description,
+        ]);
+
+        // Regra de Negócio: Todo board nasce com 3 colunas padrão
+        $board->columns()->create(['name' => 'To Do', 'order' => 1, 'wip_limit' => 999]);
+        $board->columns()->create(['name' => 'Doing', 'order' => 2, 'wip_limit' => 3]); // Limite padrão de 3 para "Doing"
+        $board->columns()->create(['name' => 'Done', 'order' => 3, 'wip_limit' => 999]);
+
+        return response()->json($board->load('columns'), 201);
+    }
+
 }
