@@ -14,6 +14,7 @@ use App\Http\Controllers\Api\CardController;
 
 // --- 1. Endpoints de Autenticação ---
 Route::post('/login', [AuthController::class, 'login']);
+Route::post('/register', [AuthController::class, 'register']);
 Route::post('/refresh', [AuthController::class, 'refresh']);
 
 // --- 2. Endpoints Públicos (sem token) ---

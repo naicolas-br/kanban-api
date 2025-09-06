@@ -89,4 +89,33 @@ class AuthController extends Controller
             'expires_at' => $tokenData['expires_at'],
         ]);
     }
+
+    public function register(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'name' => 'required|string|max:255',
+            'email' => 'required|string|email|max:255|unique:users',
+            'password' => 'required|string|min:6|confirmed',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json(['errors' => $validator->errors()], 422);
+        }
+
+        $user = User::create([
+            'name' => $request->name,
+            'email' => $request->email,
+            'password' => Hash::make($request->password),
+        ]);
+
+        // Opcional: Logar o usuário automaticamente após o cadastro
+        $tokenData = $user->createToken($request->ip(), $request->userAgent());
+
+        return response()->json([
+            'user' => $user->only('id', 'name', 'email'),
+            'access_token' => $tokenData['access_token'],
+            'refresh_token' => $tokenData['refresh_token'],
+        ], 201);
+    }
+
 }
