@@ -14,14 +14,30 @@ class BoardController extends Controller
      */
     public function index()
     {
-        // O frontend espera as contagens, então vamos otimizar a query
-        $boards = Board::with('owner:id,name') // Carrega apenas id e nome do dono
-            ->withCount(['columns', 'cards'])
-            ->latest() // Ordena pelos mais recentes
-            ->get();
+        // Carrega os quadros com o dono e suas colunas.
+        // Para cada coluna, também contamos quantos cards ela tem.
+        $boards = Board::with([
+            'owner:id,name', 
+            'columns' => function ($query) {
+                $query->withCount('cards'); // Adiciona a propriedade 'cards_count' a cada coluna
+            }
+        ])->latest()->get();
+
+        // O frontend espera uma propriedade 'count' em cada coluna, não 'cards_count'.
+        // Vamos transformar a coleção para corresponder exatamente ao que o JS precisa.
+        $boards->transform(function ($board) {
+            $board->columns->transform(function ($column) {
+                // Renomeia 'cards_count' para 'count'
+                $column->count = $column->cards_count;
+                unset($column->cards_count); // Remove a propriedade original
+                return $column;
+            });
+            return $board;
+        });
             
         return response()->json($boards);
     }
+
 
     /**
      * Mostra os detalhes completos de um quadro (endpoint público).
