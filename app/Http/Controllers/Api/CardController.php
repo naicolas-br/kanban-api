@@ -3,9 +3,13 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Models\Board;
 use App\Models\Card;
+use App\Models\Column;
+use App\Models\MoveHistory;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Validation\Rule; 
 
 class CardController extends Controller
 {
