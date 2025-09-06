@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kanban Board</title>
+    <link rel="stylesheet" href="css/main.css">
+    <link rel="stylesheet" href="css/components.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sortablejs@latest/Sortable.min.js"></script>
+</head>
+<body>
+    <!-- Loading Screen -->
+    <div id="loadingScreen" class="loading-screen">
+        <div class="loading-content">
+            <div class="spinner-large"></div>
+            <p>Carregando...</p>
+        </div>
+    </div>
+
+    <!-- Navbar -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="nav-brand">
+                <h2>🎯 Kanban Board</h2>
+            </div>
+            
+            <div class="nav-user">
+                <span id="userName" class="user-name">Carregando...</span>
+                <button id="themeToggle" class="btn btn-icon" title="Alternar tema">
+                    🌙
+                </button>
+                <button id="logoutBtn" class="btn btn-secondary">Sair</button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <!-- Dashboard View -->
+        <section id="dashboardView" class="view active">
+            <div class="container">
+                <div class="section-header">
+                    <h1>Meus Boards</h1>
+                    <button id="createBoardBtn" class="btn btn-primary">
+                        ➕ Novo Board
+                    </button>
+                </div>
+                
+                <div id="boardsGrid" class="boards-grid">
+                    <!-- Boards will be loaded here -->
+                </div>
+
+                <div class="section-header mt-large">
+                    <h2>Todos os Boards Públicos</h2>
+                </div>
+                
+                <div id="publicBoardsGrid" class="boards-grid">
+                    <!-- Public boards will be loaded here -->
+                </div>
+            </div>
+        </section>
+
+        <!-- Board View -->
+        <section id="boardView" class="view">
+            <div class="board-container">
+                <div class="board-header">
+                    <div class="board-info">
+                        <h1 id="boardTitle">Nome do Board</h1>
+                        <p id="boardDescription">Descrição do board</p>
+                        <span class="board-owner">Por: <span id="boardOwner">Nome</span></span>
+                    </div>
+                    
+                    <div class="board-actions">
+                        <button id="backToDashboard" class="btn btn-secondary">
+                            ← Voltar
+                        </button>
+                        <div id="ownerActions" class="owner-actions hidden">
+                            <button id="editBoardBtn" class="btn btn-outline">
+                                ✏️ Editar
+                            </button>
+                            <button id="addColumnBtn" class="btn btn-primary">
+                                ➕ Nova Coluna
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="kanbanBoard" class="kanban-board">
+                    <!-- Columns will be loaded here -->
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Create Board Modal -->
+    <div id="createBoardModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Criar Novo Board</h3>
+                <button class="modal-close">&times;</button>
+            </div>
+            
+            <form id="createBoardForm" class="modal-form">
+                <div class="form-group">
+                    <label for="boardTitleInput">Título *</label>
+                    <input type="text" id="boardTitleInput" name="title" required maxlength="80">
+                </div>
+                
+                <div class="form-group">
+                    <label for="boardDescInput">Descrição</label>
+                    <textarea id="boardDescInput" name="description" rows="3"></textarea>
+                </div>
+                
+                <div class="modal-actions">
+                    <button type="button" class="btn btn-secondary modal-close">Cancelar</button>
+                    <button type="submit" class="btn btn-primary">Criar Board</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Create Card Modal -->
+    <div id="createCardModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Novo Card</h3>
+                <button class="modal-close">&times;</button>
+            </div>
+            
+            <form id="createCardForm" class="modal-form">
+                <input type="hidden" id="cardColumnId" name="column_id">
+                
+                <div class="form-group">
+                    <label for="cardTitleInput">Título *</label>
+                    <input type="text" id="cardTitleInput" name="title" required maxlength="120">
+                </div>
+                
+                <div class="form-group">
+                    <label for="cardDescInput">Descrição</label>
+                    <textarea id="cardDescInput" name="description" rows="4"></textarea>
+                </div>
+                
+                <div class="modal-actions">
+                    <button type="button" class="btn btn-secondary modal-close">Cancelar</button>
+                    <button type="submit" class="btn btn-primary">Criar Card</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="js/api.js"></script>
+    <script src="js/auth.js"></script>
+    <script src="js/boards.js"></script>
+    <script src="js/cards.js"></script>
+    <script src="js/main.js"></script>
+</body>
+</html>
