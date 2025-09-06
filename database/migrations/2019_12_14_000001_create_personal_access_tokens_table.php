@@ -8,29 +8,30 @@ return new class extends Migration
 {
     /**
      * Run the migrations.
-     *
-     * @return void
      */
-    public function up()
-    {
-        Schema::create('personal_access_tokens', function (Blueprint $table) {
-            $table->id();
-            $table->morphs('tokenable');
-            $table->string('name');
-            $table->string('token', 64)->unique();
-            $table->text('abilities')->nullable();
-            $table->timestamp('last_used_at')->nullable();
-            $table->timestamp('expires_at')->nullable();
-            $table->timestamps();
-        });
-    }
+    public function up(): void
+{
+    Schema::create('personal_access_tokens', function (Blueprint $table) {
+        $table->id();
+        $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
+        $table->string('token_hash')->unique();
+        $table->string('refresh_token_hash')->unique();
+        
+        // CORREÇÃO: Adicionado nullable() para compatibilidade
+        $table->timestamp('expires_at')->nullable();
+        $table->timestamp('refresh_expires_at')->nullable();
+        $table->timestamp('last_used_at')->nullable();
+        
+        $table->string('ip_address')->nullable();
+        $table->text('user_agent')->nullable();
+        $table->timestamps();
+    });
+}
 
     /**
      * Reverse the migrations.
-     *
-     * @return void
      */
-    public function down()
+    public function down(): void
     {
         Schema::dropIfExists('personal_access_tokens');
     }
