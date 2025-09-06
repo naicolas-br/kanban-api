@@ -42,31 +42,20 @@ class BoardController extends Controller
     /**
      * Mostra os detalhes completos de um quadro (endpoint público).
      */
-    public function show(Board $board) // Laravel faz o findOrFail($id) automaticamente
+    public function show(Board $board)
     {
-        // O frontend precisa de todas as colunas e cards aninhados
-        $board->load([
-            'owner:id,name', 
-            'columns' => function ($query) {
-                $query->orderBy('order');
-            },
-            'cards.creator:id,name' // Carrega o criador de cada card
-        ]);
+        // Carrega todos os relacionamentos necessários de uma vez
+        $board->load(['owner:id,name', 'columns', 'cards.creator:id,name']);
 
-        // Reorganiza os cards dentro de suas respectivas colunas para facilitar para o frontend
-        $columns = $board->columns->map(function ($column) use ($board) {
+        // O front-end precisa dos cards tanto aninhados dentro das colunas QUANTO em um array plano de nível superior.
+        // O 'load' acima já preenche o array 'cards' de nível superior.
+        // Agora, vamos apenas garantir que eles também estejam corretamente aninhados para a renderização.
+        $board->columns->each(function ($column) use ($board) {
             $column->cards = $board->cards->where('column_id', $column->id)->values();
-            return $column;
         });
 
-        // Retorna um objeto de board com as colunas já contendo os cards
-        return response()->json([
-            'id' => $board->id,
-            'title' => $board->title,
-            'description' => $board->description,
-            'owner' => $board->owner,
-            'columns' => $columns,
-        ]);
+        // Agora, quando retornamos o objeto $board, ele terá todas as propriedades que o front-end espera.
+        return response()->json($board);
     }
     
     public function store(Request $request)
