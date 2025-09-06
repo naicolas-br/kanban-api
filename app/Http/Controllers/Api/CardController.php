@@ -5,7 +5,7 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Models\Card;
 use Illuminate\Http\Request;
-// ... outros imports
+use Illuminate\Support\Facades\Validator;
 
 class CardController extends Controller
 {

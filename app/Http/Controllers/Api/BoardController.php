@@ -5,8 +5,7 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Models\Board;
 use Illuminate\Http\Request;
-// ... outros imports
-
+use Illuminate\Support\Facades\Validator;
 class BoardController extends Controller
 {
     /**
